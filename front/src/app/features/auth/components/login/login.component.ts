@@ -42,8 +42,8 @@ export class LoginComponent {
     const loginRequest = this.form.value as LoginRequest;
     this.authService.login(loginRequest).subscribe({
       next: (response: SessionInformation) => {
-        this.sessionService.logIn(response);
-        this.router.navigate(['/sessions']);
+        this.sessionService.logIn(response); // faire un mock de ca
+        this.router.navigate(['/sessions']); // Spy sur le router 
       },
       error: error => this.onError = true,
     });

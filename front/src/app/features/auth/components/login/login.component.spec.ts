@@ -18,27 +18,10 @@ import { of, throwError } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 
-class AuthServiceMock {
-  public onError = false;
-
-  public login(loginRequest: LoginRequest): Observable<SessionInformation> {
-    return of({
-      token: "token",
-      type: "type",
-      id: 123456,
-      username: "username",
-      firstName: "name",
-      lastName: "lastname",
-      admin: false,
-    });
-  }
-  
-}
-
 describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
-  let service : AuthServiceMock;
+  let sessionService: SessionService;
   let routerTest : Router;
 
   beforeEach(async () => {
@@ -60,7 +43,7 @@ describe('LoginComponent', () => {
     component = fixture.componentInstance;
     routerTest = TestBed.inject(Router);
     fixture.detectChanges();
-    service = new AuthServiceMock();
+    sessionService = TestBed.inject(SessionService);
   });
 
 
@@ -71,37 +54,29 @@ describe('LoginComponent', () => {
 
   
   it('should not log in and catch error', () => {
-    let loginRequest : LoginRequest = { email: "test@gmail.copmm",
-    password: "superpwd",}
-    const loginMock = jest.fn().mockReturnValue(throwError('Unauthorized'));
+    const authService = TestBed.inject(AuthService);
 
-    service.login = loginMock;
-
-    service.login(loginRequest).subscribe({
-      next:(response: SessionInformation) =>{
-        routerTest.navigate(['/sessions']);
-      },
-      error: error => service.onError = true,
-    })
-    expect(service.onError).toBe(true);
-  });
-
-  it('should should log and route to /sessions ', () => {
-    const loginRequest : LoginRequest = { email: "test@gmail.copm m",
-        password: "superpwd",};
-    const sessionInformation: SessionInformation ={
-          token: "token",
-          type: "type",
-          id: 123456,
-          username: "username",
-          firstName: "name",
-          lastName: "lastname",
-          admin: false,
-    }
-    jest.spyOn(service, 'login').mockReturnValue(of(sessionInformation));
+    const loginSpy = jest.spyOn(authService, 'login').mockImplementation(() => throwError(() => new Error('err')));
 
     component.submit();
     
+    expect(loginSpy).toHaveBeenCalled();
+    expect(component.onError).toBe(true);
+  });
+
+  it('should should log and route to /sessions ', () => {
+    const authService = TestBed.inject(AuthService);
+
+    const routerTestSpy = jest.spyOn(routerTest, 'navigate').mockImplementation(async () => true);
+
+    const authSpy = jest.spyOn(authService, 'login').mockImplementation(() => of({} as SessionInformation));
+
+    jest.spyOn(sessionService, 'logIn').mockImplementation(() => {});
+
+    component.submit();
+    
+    expect(authSpy).toHaveBeenCalled();
+    expect(routerTestSpy).toHaveBeenCalledWith(['/sessions']);
   });
 
 });

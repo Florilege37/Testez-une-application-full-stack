@@ -9,18 +9,20 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { expect } from '@jest/globals';
 
 import { RegisterComponent } from './register.component';
-import { RegisterRequest } from '../../interfaces/registerRequest.interface';
+import { of, throwError } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { RouterTestingModule } from '@angular/router/testing';
 import { LoginComponent } from '../login/login.component';
 import { Router } from '@angular/router';
+import { SessionService } from 'src/app/services/session.service';
+import { SessionInformation } from 'src/app/interfaces/sessionInformation.interface';
 
 describe('RegisterComponent', () => {
   let component: RegisterComponent;
   let fixture: ComponentFixture<RegisterComponent>;
-  let authService: AuthService;
   let routerTest : Router;
-  let spy : any;
+  let authService: AuthService;
+  let sessionService: SessionService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -41,27 +43,38 @@ describe('RegisterComponent', () => {
     fixture = TestBed.createComponent(RegisterComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+    sessionService = TestBed.inject(SessionService);
+    authService = TestBed.inject(AuthService);
+    routerTest = TestBed.inject(Router);
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  /*it('should call authService.register and navigate to login on successful registration', () => {
-    // Arrange
-    const registerRequest =  {
-      email: "tedst@gmail.com",
-      firstName: "Lucas",
-      lastName: "Durant",
-      password: "pwdSecure",
-    }
+  it('should indicate "An error occured"', () => {
+    const message = 'An error occurred';
+    jest.spyOn(authService, 'register').mockImplementation(() => throwError(message));
 
-    spy = spyOn(authService, 'register').and.stub();
-  
     component.submit();
 
-    expect(authService.register).toHaveBeenCalledWith(registerRequest);
-    expect(routerTest.navigate).toHaveBeenCalledWith(['/login']);
-  });*/
+    expect(component.onError).toBe(true);
+  });
+
+  it('should call authService.register and navigate to login on successful registration and route to /login', () => {
+    const authService = TestBed.inject(AuthService);
+
+    const routerTestSpy = jest.spyOn(routerTest, 'navigate').mockImplementation(async () => true);
+
+    const authSpy = jest.spyOn(authService, 'register').mockImplementation(() => of(undefined));
+
+    jest.spyOn(sessionService, 'logIn').mockImplementation(() => {});
+
+    component.submit();
+    
+    expect(authSpy).toHaveBeenCalled();
+    expect(routerTestSpy).toHaveBeenCalledWith(['/login']);
+  });
 
 });
+

@@ -76,5 +76,24 @@ describe('RegisterComponent', () => {
     expect(routerTestSpy).toHaveBeenCalledWith(['/login']);
   });
 
+  it('should have valid form', async () => {
+    expect(component).toBeTruthy();
+
+    const nativeElement = fixture.nativeElement;
+
+    const form = nativeElement.querySelector('.register-form');
+    expect(form).toBeTruthy();
+
+    const firstName = form.querySelector('input[formcontrolname=firstName]');
+    const lastName = form.querySelector('input[formcontrolname=lastName]');
+    const email = form.querySelector('input[formcontrolname=email]');
+    const password = form.querySelector('input[formcontrolname=password]');
+
+    expect(firstName).toBeTruthy();
+    expect(lastName).toBeTruthy();
+    expect(email).toBeTruthy();
+    expect(password).toBeTruthy();
+  });
+
 });
 

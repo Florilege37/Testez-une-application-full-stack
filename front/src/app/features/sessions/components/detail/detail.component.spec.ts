@@ -47,7 +47,8 @@ describe('DetailComponent', () => {
         ReactiveFormsModule
       ],
       declarations: [DetailComponent], 
-      providers: [{ provide: SessionService, useValue: mockSessionService }],
+      providers: [{ provide: SessionService, useValue: mockSessionService }, 
+        ],
     })
       .compileComponents();
       service = TestBed.inject(SessionService);
@@ -67,7 +68,7 @@ describe('DetailComponent', () => {
   it('should delete ', () => {
     
     const sessionApiSpy = jest.spyOn(sessionApiService, 'delete').mockImplementation(() => of(true));
-    const barSpy  = jest.spyOn(bar, 'open');
+    const barSpy  = jest.spyOn(bar, 'open').mockImplementation();
     const routerTestSpy = jest.spyOn(routerTest, 'navigate').mockImplementation(async () => true);
     
 

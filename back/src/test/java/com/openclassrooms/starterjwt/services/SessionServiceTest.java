@@ -186,7 +186,7 @@ public class SessionServiceTest {
     public void userNoLongerParticipateToSessionButUserNotRegistered(){
         when(sessionRepository.findById(sessionId)).thenReturn(Optional.ofNullable(mockSession));
 
-        assertThrows(BadRequestException.class, () -> sessionService.participate(sessionId, userId));
+        assertThrows(BadRequestException.class, () -> sessionService.noLongerParticipate(sessionId, userId));
         verify(sessionRepository, times(1)).findById(sessionId);
     }
 }

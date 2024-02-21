@@ -5,12 +5,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { SessionService } from 'src/app/services/session.service';
 
 import { MeComponent } from './me.component';
 import { Router } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import { of } from 'rxjs';
+import { SessionService } from '../../services/session.service';
 
 describe('MeComponent', () => {
   let component: MeComponent;
@@ -57,7 +57,7 @@ describe('MeComponent', () => {
           provide: UserService,
           useValue: {
             getById: () => of(userTest),
-            delete: () => of({}),
+            delete: (id : string) => of({}),
           },
       }],
     })
@@ -80,7 +80,7 @@ describe('MeComponent', () => {
     
     const routerTestSpy = jest.spyOn(routerTest, 'navigate').mockImplementation(async () => true);
     const sessionSpy = jest.spyOn(sessionService, 'logOut');
-    const barSpy  = jest.spyOn(bar, 'open');
+    const barSpy  = jest.spyOn(bar, 'open').mockImplementation();;
     
 
     component.delete();
@@ -102,5 +102,52 @@ describe('MeComponent', () => {
       createdAt: date,
     });
   });
+
+  /*it('should display right user info', async () => {
+
+    const nativeElement = fixture.nativeElement;
+
+    const userTest = {
+      id: 1,
+      email: 'test@gmail.com',
+      lastName: 'Tremelo',
+      firstName: 'Florian',
+      admin: true,
+      password: 'pwdTest',
+      createdAt: date,
+      updatedAt: date,
+    };
+
+    component.user = userTest;
+
+    fixture.detectChanges();
+
+    const [
+      userName,
+      userMail,
+      userIsAdmin,
+      userCreatedAt,
+      userUpdatedAt,
+    ] = nativeElement.querySelectorAll('p');
+
+    expect(userName.textContent).toEqual(
+      `Name: ${userTest.firstName} ${userTest.lastName.toUpperCase()}`
+    );
+
+    expect(userMail.textContent).toEqual(`Email: ${userTest.email}`);
+
+    expect(userIsAdmin.textContent).toEqual('You are admin');
+
+    let dateComparaison = userTest.createdAt;
+    const options = {month: "long"};
+    const dateBonFormat = new Intl.DateTimeFormat("en-US", options).format(dateComparaison);
+    let jour = date.getDay().toString();
+    let mois = date.getMonth.
+
+    expect(userCreatedAt.textContent).toEqual('Create at:');
+
+    expect(userUpdatedAt.textContent).toEqual(date);
+
+  });*/
   
 });

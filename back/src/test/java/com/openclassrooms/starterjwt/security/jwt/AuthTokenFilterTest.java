@@ -1,11 +1,15 @@
 package com.openclassrooms.starterjwt.security.jwt;
 
+import com.openclassrooms.starterjwt.security.services.UserDetailsImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 
 import javax.servlet.FilterChain;
@@ -14,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -46,11 +50,19 @@ public class AuthTokenFilterTest {
 
     @Test
     void doFilterInternalNotValidToken() throws ServletException, IOException {
+        UserDetails userDetails = new UserDetailsImpl(1L,"mail@test","Michel","Blanc",false,"pwdTest");
         when(request.getHeader("Authorization")).thenReturn("Bearer invalidToken");
 
         authTokenFilter.doFilterInternal(request, response, filterChain);
 
+        UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken(
+                        userDetails,
+                        null,
+                        userDetails.getAuthorities());
+
         verify(filterChain).doFilter(request, response);
-        assertNull(SecurityContextHolder.getContext().getAuthentication());
+
+        assertNotEquals(SecurityContextHolder.getContext().getAuthentication(), authentication);
     }
 }

@@ -42,7 +42,11 @@ public class TeacherControllerTest {
 
     @Test
     void findByIdCatchErrorTest(){
-        assertThrows(NumberFormatException.class,() -> teacherService.findById(Long.valueOf("test")));
+        when(teacherService.findById(Long.valueOf("11"))).thenThrow(NumberFormatException.class);
+
+        ResponseEntity response = teacherController.findById("11");
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test

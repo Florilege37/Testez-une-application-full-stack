@@ -9,11 +9,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -45,7 +50,11 @@ public class UserControllerTest {
 
     @Test
     void findByIdCatchErrorTest() {
-        assertThrows(NumberFormatException.class, () -> userService.findById(Long.valueOf("test")));
+        when(userService.findById(Long.valueOf("11"))).thenThrow(NumberFormatException.class);
+
+        ResponseEntity response = userController.findById("11");
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test
@@ -81,13 +90,21 @@ public class UserControllerTest {
 
     @Test
     void saveCatchErrorTest() {
-        assertThrows(NumberFormatException.class, () -> userService.findById(Long.valueOf("Test")));
+        when(userService.findById(Long.valueOf("11"))).thenThrow(NumberFormatException.class);
+
+        ResponseEntity response = userController.save("11");
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test
     void saveUnauthorizedTest() {
+        SecurityContext securityContextMock = Mockito.mock(SecurityContext.class);
+        SecurityContextHolder.setContext(securityContextMock);
+        Authentication authenticationMock = Mockito.mock(Authentication.class);
         userDetails = new UserDetailsImpl(55L,"mail@testWRONG","Michel","Blanc",false,"pwd");
         when(userService.findById(Long.valueOf("55"))).thenReturn(mockUser);
+        when(securityContextMock.getAuthentication()).thenReturn(authenticationMock);
         when((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(userDetails);
 
         ResponseEntity response = userController.save("55");
@@ -97,9 +114,13 @@ public class UserControllerTest {
 
     @Test
     void saveTest() {
+        SecurityContext securityContextMock = Mockito.mock(SecurityContext.class);
+        SecurityContextHolder.setContext(securityContextMock);
+        Authentication authenticationMock = Mockito.mock(Authentication.class);
         userDetails = new UserDetailsImpl(55L,"mail@test","Michel","Blanc",false,"pwd");
         when(userService.findById(Long.valueOf("55"))).thenReturn(mockUser);
-        when((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(userDetails);
+        when(securityContextMock.getAuthentication()).thenReturn(authenticationMock);
+        when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(userDetails);
 
         ResponseEntity response = userController.save("55");
 

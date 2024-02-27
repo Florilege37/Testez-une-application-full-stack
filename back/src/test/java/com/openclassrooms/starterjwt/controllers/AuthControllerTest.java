@@ -10,8 +10,10 @@ import com.openclassrooms.starterjwt.security.services.UserDetailsImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -37,7 +39,7 @@ public class AuthControllerTest {
 
     @Mock
     private UserRepository userRepository;
-
+    
     private AuthController authController;
 
     User mockUser;
@@ -84,12 +86,8 @@ public class AuthControllerTest {
         when(userRepository.existsByEmail("test@gmail")).thenReturn(false);
         when(passwordEncoder.encode(signupRequest.getPassword())).thenReturn("pwdTestEncode");
 
-        User user = new User(signupRequest.getEmail(),
-                signupRequest.getLastName(),
-                signupRequest.getFirstName(),
-                passwordEncoder.encode(signupRequest.getPassword()),
-                false);
+        ResponseEntity response = authController.registerUser(signupRequest);
 
-        verify(userRepository, times(1)).save(user);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 }

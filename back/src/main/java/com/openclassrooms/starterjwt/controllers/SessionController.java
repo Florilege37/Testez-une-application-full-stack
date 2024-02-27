@@ -60,15 +60,15 @@ public class SessionController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<?> update(@PathVariable("id") String id, @Valid @RequestBody SessionDto sessionDto) {
-        try {
-            Session session = this.sessionService.update(Long.parseLong(id), this.sessionMapper.toEntity(sessionDto));
+        public ResponseEntity<?> update(@PathVariable("id") String id, @Valid @RequestBody SessionDto sessionDto) {
+            try {
+                Session session = this.sessionService.update(Long.parseLong(id), this.sessionMapper.toEntity(sessionDto));
 
-            return ResponseEntity.ok().body(this.sessionMapper.toDto(session));
-        } catch (NumberFormatException e) {
-            return ResponseEntity.badRequest().build();
+                return ResponseEntity.ok().body(this.sessionMapper.toDto(session));
+            } catch (NumberFormatException e) {
+                return ResponseEntity.badRequest().build();
+            }
         }
-    }
 
     @DeleteMapping("{id}")
     public ResponseEntity<?> save(@PathVariable("id") String id) {

@@ -29,9 +29,9 @@ describe('Login And LogOut', () => {
     cy.intercept('POST', '/api/auth/login', {
       body: {
         id: 1,
-        username: 'userName',
-        firstName: 'firstName',
-        lastName: 'lastName',
+        username: 'yoga@studio.com',
+        firstName: 'Michel',
+        lastName: 'Blanc',
         admin: true,
       },
     });

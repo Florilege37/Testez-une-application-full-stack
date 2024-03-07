@@ -81,9 +81,17 @@ describe('Login And check /sessions', () => {
         cy.url().should('include', '/sessions') 
 
         cy.get('mat-card-actions button').eq(0).click({onclick});
+
+        cy.url().should('include', '/sessions/detail/1') 
   
         cy.get('button[color="warn"]').should('contain', 'Delete');
         cy.get('span[class="ml1"]').should('contain', '5 attendees');
+
+        cy.get('button[color="warn"]').click({onclick});
+
+        cy.intercept('DELETE', '/api/sessions/1');
+
+        cy.url().should('include', '/sessions') 
       })
 
       it('Login with classic user and session detail with Participate', () => {
@@ -168,9 +176,11 @@ describe('Login And check /sessions', () => {
         cy.url().should('include', '/sessions') 
 
         cy.get('mat-card-actions button').eq(0).click({onclick});
+
+        cy.url().should('include', '/sessions/detail/1') 
   
         cy.get('span[class="ml1"]').should('contain', 'Participate');
-        cy.get('span[class="ml1"]').should('contain', '5 attendees');
+        cy.get('span[class="ml1"]').should('contain', '4 attendees');
       })
 
       it('Login with classic user and session detail with Do not participate', () => {
@@ -255,6 +265,8 @@ describe('Login And check /sessions', () => {
         cy.url().should('include', '/sessions') 
 
         cy.get('mat-card-actions button').eq(0).click({onclick});
+
+        cy.url().should('include', '/sessions/detail/1') 
   
         cy.get('span[class="ml1"]').should('contain', 'Do not participate');
         cy.get('span[class="ml1"]').should('contain', '5 attendees');

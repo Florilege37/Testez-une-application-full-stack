@@ -44,3 +44,7 @@ VALUES ('Margot', 'DELAHAYE'),
 INSERT INTO USERS (first_name, last_name, admin, email, password)
 VALUES ('Admin', 'Admin', true, 'yoga@studio.com', '$2a$10$.Hsa/ZjUVaHqi0tp9xieMeewrnZxrZ5pQRzddUXE/WjDu2ZThe6Iq'); 
 
+/* Test intégration */
+INSERT INTO TEACHERS (id,last_name,first_name) VALUES ('14', 'BLANC', 'MICHEL');
+INSERT INTO SESSIONS (id,name,description,date,teacher_id) VALUES ('99','Session Yoga', 'Repos', CURRENT_TIMESTAMP, '14');
+INSERT INTO SESSIONS (id,name,description,teacher_id) VALUES ('98','Session Yoga', 'Repos', '14');

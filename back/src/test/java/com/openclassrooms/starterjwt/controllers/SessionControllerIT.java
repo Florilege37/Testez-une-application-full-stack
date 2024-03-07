@@ -44,29 +44,25 @@ public class SessionControllerIT {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
+    @Autowired
     private SessionService sessionService;
 
     @Test
     @WithMockUser(username = "testProfile@test.com", roles = "ADMIN")
     public void sessionCreateTest() throws Exception {
-        // Create SessionDto
-        SessionDto sessionDto = new SessionDto(11L,"sessionTest",null,22L, "desc Test", new ArrayList<>(),null,null);
-
-        // Create Session
-        Session mockSession = new Session(11L,"sessionTest",null,"desc Test", new Teacher(), new ArrayList<>(),null,null);
-
-        //Create
-        when(sessionService.create(any(Session.class))).thenReturn(mockSession);
-
-        when(sessionService.getById(11L)).thenReturn(mockSession);
-
-        mockMvc.perform(get("/api/session/{id}", 11L)
+        mockMvc.perform(get("/api/session/{id}", 99L)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value(sessionDto.getName()))
-                .andExpect(jsonPath("$.description").value(sessionDto.getDescription()));
+                .andExpect(jsonPath("$.name").value("Session Yoga"))
+                .andExpect(jsonPath("$.description").value("Repos"));
+    }
 
+    @Test
+    @WithMockUser(username = "testProfile@test.com", roles = "ADMIN")
+    public void sessionGetNotFoundTest() throws Exception {
+        mockMvc.perform(get("/api/session/{id}", 985321L)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
     }
     @Test
     @WithMockUser(username = "testProfile@test.com", roles = "ADMIN")
@@ -76,18 +72,30 @@ public class SessionControllerIT {
         LocalDateTime localDateTime = LocalDateTime.parse(isoString, formatter);
 
         // Create SessionDto
-        SessionDto sessionDto = new SessionDto(11L,"sessionTest",new Date(),22L, "desc Test", new ArrayList<>(),localDateTime,localDateTime);
+        SessionDto sessionDto = new SessionDto(98L,"sessionTest",new Date(),14L, "desc Test", new ArrayList<>(),localDateTime,localDateTime);
 
-        // Create Session
-        Session mockSession = new Session(11L,"sessionTest",new Date(),"desc Test", new Teacher(), new ArrayList<>(),localDateTime,localDateTime);
-
-        when(sessionService.update(11L,mockSession)).thenReturn(mockSession);
-
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/session/{id}", 11L)
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/session/{id}", 98L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(sessionDto)))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("sessionTest"))
+                .andExpect(jsonPath("$.description").value("desc Test"));
+    }
+
+    @Test
+    @WithMockUser(username = "testProfile@test.com", roles = "ADMIN")
+    public void sessionUpdateBadRequestTest() throws Exception {
+        String isoString = "2024-02-27T16:18:21";
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+        LocalDateTime localDateTime = LocalDateTime.parse(isoString, formatter);
+
+        // Create SessionDto
+        SessionDto sessionDto = new SessionDto(98L,"sessionTest",new Date(),14L, "desc Test", new ArrayList<>(),localDateTime,localDateTime);
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/session/{id}", "dfq")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(sessionDto)))
+                .andExpect(status().isBadRequest());
     }
 
     @Test

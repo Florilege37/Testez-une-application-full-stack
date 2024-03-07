@@ -6,7 +6,7 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 Git clone:
 
-> git clone https://github.com/OpenClassrooms-Student-Center/P5-Full-Stack-testing
+> git clone https://github.com/Florilege37/Testez-une-application-full-stack
 
 Go inside folder:
 
@@ -66,6 +66,10 @@ Report is available here:
 Launching test:
 
 > npm run test
+
+Launching test with coverage : 
+
+> .\node_modules\.bin\jest --coverage
 
 for following change:
 

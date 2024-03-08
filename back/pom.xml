@@ -113,6 +113,8 @@
 						<exclude>com/openclassrooms/starterjwt/mapper/**</exclude>
 						<exclude>com/openclassrooms/starterjwt/models/**</exclude>
 						<exclude>com/openclassrooms/starterjwt/payload/**</exclude>
+						<exclude>com/openclassrooms/starterjwt/security/jwt/AuthEntryPoint**</exclude>
+						<exclude>com/openclassrooms/starterjwt/SpringBootSecurity**</exclude>
 					</excludes>
 				</configuration>
 				<executions>
@@ -143,7 +145,7 @@
 										<limit>
 											<counter>LINE</counter>
 											<value>COVEREDRATIO</value>
-											<minimum>0</minimum>
+											<minimum>0.8</minimum>
 										</limit>
 									</limits>
 								</rule>
